@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema, model } = mongoose;
 
-const userSchema = new Schema(
+const adminSchema = new Schema(
   {
     username: {
       type: String,
@@ -19,5 +19,5 @@ const userSchema = new Schema(
   { timestamps: true }
 );
 
-const User = model("Users", userSchema);
-module.exports = User;
+const Admin = model("Admins", adminSchema);
+module.exports = Admin;

@@ -1,6 +1,7 @@
 require("dotenv").config();
 const http = require("http");
 const express = require("express");
+const cookieParser = require("cookie-parser");
 const path = require("path");
 const mongoose = require("mongoose");
 
@@ -17,16 +18,14 @@ const port = process.env.PORT || "4000";
 const httpServer = http.createServer(app);
 
 const loginRouter = require("./routes/loginRouter");
-const usersRouter = require("./routes/usersRouter");
-const friendsRouter = require("./routes/friendsRouter");
-const friendRequestsRouter = require("./routes/friendRequestsRouter");
-const chatRouter = require("./routes/chatRouter");
+const adminLoginRouter = require("./routes/adminLoginRouter");
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
 
 app.use("/api", loginRouter);
-app.use("/api/users", verify_token, usersRouter);
-app.use("/api/friends", verify_token, friendsRouter);
-app.use("/api/friend_requests", verify_token, friendRequestsRouter);
-app.use("/api/chat", verify_token, chatRouter);
+app.use("/api/admin", adminLoginRouter);
 
 httpServer.listen(port);
 module.exports = app;
