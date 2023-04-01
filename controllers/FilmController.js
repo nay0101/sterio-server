@@ -1,6 +1,7 @@
 const Film = require("../models/films");
+const Rating = require("../models/ratings");
 
-const stream = async (res, req) => {
+const stream = async (req, res) => {
   const { film_id } = req.params;
 
   try {
@@ -42,4 +43,67 @@ const stream = async (res, req) => {
   }
 };
 
-module.exports = { stream };
+const uploadFilm = async (req, res) => {
+  const { film_name, film_description, views, year, tags, director, casts } =
+    req.body;
+  const file = req.file;
+  const source = file.path;
+  try {
+    const result = await Film.create({
+      film_name,
+      film_description,
+      views,
+      year,
+      tags,
+      director,
+      casts,
+      source,
+    });
+    res.status(201).send({ film_id: result._id });
+  } catch (err) {
+    res.sendStatus(400);
+  }
+};
+
+const updateFilm = async (req, res) => {
+  try {
+    const file = req.file;
+    if (file) req.body.source = file.path;
+    await Film.findByIdAndUpdate(req.params.film_id, req.body);
+    res.status(200).end();
+  } catch (err) {
+    res.sendStatus(400);
+  }
+};
+
+const deleteFilm = async (req, res) => {
+  try {
+    await Film.findByIdAndDelete(req.params.film_id);
+    res.status(200).end();
+  } catch (err) {
+    res.sendStatus(400);
+  }
+};
+
+const rateFilm = async (req, res) => {
+  try {
+    const { rating } = req.body;
+    const film_id = req.params.film_id;
+    const user_id = req.user_id;
+    const result = await Rating.findOne({ user_id });
+    if (result) {
+      await Rating.findOneAndUpdate({ user_id }, { rating });
+      return res.sendStatus(200);
+    }
+    await Rating.create({
+      user_id,
+      film_id,
+      rating,
+    });
+    res.sendStatus(200);
+  } catch (err) {
+    res.sendStatus(400);
+  }
+};
+
+module.exports = { stream, uploadFilm, updateFilm, deleteFilm, rateFilm };

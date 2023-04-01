@@ -11,7 +11,7 @@ const ratingSchema = new Schema(
       type: mongoose.ObjectId,
       required: true,
     },
-    stars: {
+    rating: {
       type: Number,
       required: true,
     },
